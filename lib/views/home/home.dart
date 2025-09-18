@@ -1,9 +1,12 @@
 
+import 'package:first_project/models/city_model.dart';
+import 'package:first_project/widgetts/ask_modal.dart';
 import 'widgets/city_card.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
+  static String routeName = '/';
 
   @override
   State<Home> createState() => _HomeState();
@@ -13,10 +16,15 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home>{
 
   List cities = [
-    { 'name':'Paris', 'image':'assets/images/ville1.jpg', 'checked':false},
-    { 'name':'Lyon', 'image':'assets/images/ville2.jpg', 'checked':false},
-    { 'name':'Nice', 'image':'assets/images/ville3.jpg', 'checked':false},
+    City(name: 'Paris', image: 'assets/images/ville1.jpg'),
+    City(name: 'Lyon', image: 'assets/images/ville2.jpg'),
+    City(name: 'Nice', image: 'assets/images/ville3.jpg'),
   ];
+
+  Future<void> openModal(BuildContext context) async {
+    final result = await askModal(context, 'Hello veux tu quelque chose !');
+    print('Result $result');
+  }
 
   void switchChecked(city){
     int index = cities.indexOf(city);
@@ -41,10 +49,11 @@ class _HomeState extends State<Home>{
             children: <Widget>[
               // CityCard(image: 'assets/images/ville3.jpg', name: 'Paris'),
               ...cities.map((city){  // transforme l'array de Widget en list
-                return CityCard(name: city['name'], image: city['image'], checked: city['checked'],
-                  updateChecked: () => switchChecked(city)
+                return CityCard(
+                  city:city
                 );
-              })
+              }),
+              ElevatedButton(onPressed: () => openModal(context), child: Text('modal'))
               // CityCard(),
               // CityCard()
             ],

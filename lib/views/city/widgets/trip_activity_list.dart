@@ -1,4 +1,4 @@
-import '../../../models/activity.model.dart';
+import '../../../models/activity_model.dart';
 import 'package:flutter/material.dart';
 
 class TripActivityList extends StatelessWidget {
@@ -23,12 +23,26 @@ class TripActivityList extends StatelessWidget {
               leading: CircleAvatar(
                 backgroundImage: AssetImage(activity.image),
               ),
-              title: Text(activity.name),
+              title: Text(activity.name, 
+                // style: Theme.of(context).textTheme.bodySmall
+              ),
               subtitle: Text(activity.city),
               trailing: IconButton(
                 icon: Icon(Icons.delete, color: Colors.red),
                 onPressed: () {
                   deleteTripActivity(activity.id);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Activité supprimé !'),
+                      duration: Duration(seconds: 2),
+                      action: SnackBarAction(
+                        label: 'Annuler', 
+                        onPressed: (){
+                          print('testing');
+                        }
+                      ),
+                    )
+                  );
                 },
               ),
             ),

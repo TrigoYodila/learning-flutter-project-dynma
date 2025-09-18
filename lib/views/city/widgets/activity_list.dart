@@ -1,4 +1,4 @@
-import '../../../models/activity.model.dart';
+import '../../../models/activity_model.dart';
 import '../widgets/activity_card.dart';
 import 'package:flutter/material.dart';
 

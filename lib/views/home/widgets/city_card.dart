@@ -1,12 +1,10 @@
+import 'package:first_project/models/city_model.dart';
 import 'package:flutter/material.dart';
 
 class CityCard extends StatelessWidget {
-  final String name;
-  final String image;
-  final bool checked;
-  final VoidCallback? updateChecked;
+  final City city;
 
-  const CityCard({super.key, required this.name, required this.image, required this.checked, this.updateChecked});
+  const CityCard({super.key, required this.city});
 
   @override
   Widget build(BuildContext context) {
@@ -19,40 +17,34 @@ class CityCard extends StatelessWidget {
             children: <Widget>[
               Ink.image(
                 fit: BoxFit.cover,
-                image: AssetImage(image),   // 'assets/images/ville3.jpg'
+                image: AssetImage(city.image),   // 'assets/images/ville3.jpg'
                 child: InkWell(
-                  onTap: updateChecked,
+                  onTap:(){
+                    // Navigator.push(context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) => CityView()
+                    //   )
+                    // );
+                    Navigator.pushNamed(
+                      context, 
+                      '/city',
+                      arguments: city
+                    );
+                  },
                 ),
               ),
               // Image.asset('assets/images/ville2.jpg', fit: BoxFit.cover),
-              Padding(
-                padding: EdgeInsets.all(10.0),
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(
-                            checked ? Icons.star : Icons.star_border,
-                            size: 40,
-                            color: Colors.white,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Text(
-                          name,
-                          style: TextStyle(color: Colors.white, fontSize: 30),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+              Positioned(
+                top: 10,
+                left: 10,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  color: Colors.black54,
+                  child: Text(city.name, style: TextStyle(
+                    fontSize: 30,
+                    color: Colors.white
+                  ),),
+                ))
             ],
           ),
         ),
