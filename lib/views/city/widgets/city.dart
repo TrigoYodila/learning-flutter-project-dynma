@@ -47,7 +47,7 @@ class _CityState extends State<CityView> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     index = 0;
-    trip = Trip(city: 'Paris', activities: [], date: DateTime.now());
+    trip = Trip(city: widget.city.name, activities: [], date: DateTime.now());
     // print('initState appelé');
   }
 
@@ -59,11 +59,6 @@ class _CityState extends State<CityView> with WidgetsBindingObserver {
 
   // }
 
-  List<Activity> get tripActivities {
-    return widget.activities
-        .where((activity) => trip.activities.contains(activity.id))
-        .toList();
-  }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -100,17 +95,17 @@ class _CityState extends State<CityView> with WidgetsBindingObserver {
     });
   }
 
-  void toggleActivity(String id) {
+  void toggleActivity(Activity activity) {
     setState(() {
-      trip.activities.contains(id)
-          ? trip.activities.remove(id)
-          : trip.activities.add(id);
+      trip.activities.contains(activity)
+          ? trip.activities.remove(activity)
+          : trip.activities.add(activity);
     });
   }
 
-  void deleteTripActivity(String id) {
+  void deleteTripActivity(Activity activity) {
     setState(() {
-      trip.activities.remove(id);
+      trip.activities.remove(activity);
     });
   }
 
@@ -149,7 +144,21 @@ class _CityState extends State<CityView> with WidgetsBindingObserver {
       },
     );
 
-    if(result == 'save'){
+    if(trip.date == null){
+      showDialog(context: context, builder: (context){
+        return AlertDialog(
+          title: Text('Attention !'),
+          content: Text('Vous n\'avez pas entré la date'),
+          actions: <Widget>[
+            FloatingActionButton(onPressed: (){
+              Navigator.pop(context);
+            },
+            child: Text('Ok'),
+            ),
+          ],
+        );
+      });
+    }else if(result == 'save'){
       widget.addTrip(trip);
        Navigator.pushNamed(context, Home.routeName);
     }
@@ -179,10 +188,7 @@ class _CityState extends State<CityView> with WidgetsBindingObserver {
 
   double get amount {
     return trip.activities.fold(0.0, (prev, element) {
-      var activity = widget.activities.firstWhere(
-        (activity) => activity.id == element,
-      );
-      return prev + activity.price;
+      return prev + element.price;
     });
   }
 
@@ -246,7 +252,7 @@ class _CityState extends State<CityView> with WidgetsBindingObserver {
                       toggleActivity: toggleActivity,
                     )
                   : TripActivityList(
-                      activities: tripActivities,
+                      activities: trip.activities,
                       deleteTripActivity: deleteTripActivity,
                     ),
             ),

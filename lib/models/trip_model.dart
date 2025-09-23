@@ -1,6 +1,8 @@
+import 'package:first_project/models/activity_model.dart';
+
 class Trip {
   String city;
-  List<String> activities;  // liste des ids des activités
+  List<Activity> activities;  // liste des ids des activités
   DateTime date;   // nombre de millisecondes ecouler depuis 1970
   Trip({
     required this.city, 
