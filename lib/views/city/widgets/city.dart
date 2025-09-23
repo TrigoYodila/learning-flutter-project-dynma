@@ -1,18 +1,22 @@
 import 'package:first_project/models/city_model.dart';
 import 'package:first_project/views/city/widgets/trip_activity_list.dart';
 import 'package:first_project/views/home/home.dart';
+import '../../../widgetts/dyma_drawer.dart';
 import 'package:flutter/material.dart';
-import '../../../data/data.dart' as data;
 import '../widgets/activity_list.dart';
 import '../../../models/activity_model.dart';
 import '../../../models/trip_model.dart';
 import '../widgets/trip_overview.dart';
 
 class CityView extends StatefulWidget {
-  static String routeName = '/city';
+  static const String routeName = '/city';
 
-  final List<Activity> activities = data.activities;
   final City city;
+  final Function addTrip;
+
+  List<Activity> get activities {
+    return city.activities;
+  }
 
   showContext({required BuildContext context, required List<Widget> children}) {
     var orientation = MediaQuery.of(context).orientation;
@@ -27,7 +31,7 @@ class CityView extends StatefulWidget {
     }
   }
 
-  CityView({super.key, required this.city});
+  const CityView({super.key, required this.city, required this.addTrip});
 
   @override
   State<CityView> createState() => _CityState();
@@ -145,7 +149,10 @@ class _CityState extends State<CityView> with WidgetsBindingObserver {
       },
     );
 
-    Navigator.pushNamed(context, Home.routeName);
+    if(result == 'save'){
+      widget.addTrip(trip);
+       Navigator.pushNamed(context, Home.routeName);
+    }
 
   }
   // @override   // 3. Mise à jour des dépendances
@@ -184,13 +191,9 @@ class _CityState extends State<CityView> with WidgetsBindingObserver {
     // final City city = ModalRoute.of(context)!.settings.arguments as City;
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.chevron_left),
-        ),
         title: Text('Organisation du voyage'),
-        actions: <Widget>[Icon(Icons.more_vert)],
       ),
+      drawer: DymaDrawer(),
       body: Container(
         padding: EdgeInsets.only(left: 10, right: 10),
         // child: ListView(
