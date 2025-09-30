@@ -1,14 +1,16 @@
 
 import 'package:first_project/models/city_model.dart';
+import 'package:first_project/providers/city_provider.dart';
 import 'package:first_project/widgetts/ask_modal.dart';
+import 'package:provider/provider.dart';
 import '../../widgetts/dyma_drawer.dart';
 import 'widgets/city_card.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
-  final List<City> cities;
+  // final List<City> cities;
 
-  const Home({super.key, required this.cities});
+  const Home({super.key});
   static const String routeName = '/';
 
   @override
@@ -33,6 +35,7 @@ class _HomeState extends State<Home>{
 
   @override
   Widget build(BuildContext context) {
+    List<City> cities = Provider.of<CityProvider>(context).cities;
     return Scaffold(
         appBar: AppBar(
           title: Text('dymatrip'),
@@ -43,19 +46,16 @@ class _HomeState extends State<Home>{
           alignment: Alignment.topLeft,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
+            children:
               // CityCard(image: 'assets/images/ville3.jpg', name: 'Paris'),
-              ...widget.cities.map((city){  // transforme l'array de Widget en list
+              cities.map((city){  // transforme l'array de Widget en list
                 return CityCard(
                   city:city
                 );
-              }),
-              ElevatedButton(onPressed: () => openModal(context), child: Text('modal'))
+              }).toList()),
               // CityCard(),
               // CityCard()
-            ],
           ),
-        ),
-      );
+        );
   }
 }

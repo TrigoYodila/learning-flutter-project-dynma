@@ -3,11 +3,11 @@ import 'package:flutter/cupertino.dart';
 
 class Trip {
   String id;
-  String city;
+  String? city;
   List<Activity> activities;  // liste des ids des activités
   DateTime date;   // nombre de millisecondes ecouler depuis 1970
   Trip({
-    required this.city, 
+    this.city, 
     required this.activities,
     required this.date,
     String? id,

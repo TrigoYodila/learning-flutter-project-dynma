@@ -1,11 +1,14 @@
 import 'package:first_project/models/activity_model.dart';
+import 'package:first_project/providers/trip_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class TripActivityList extends StatelessWidget {
 
   final List<Activity> activities;
+  final ActivityStatus filter;
 
-  const TripActivityList({super.key, required this.activities});
+  const TripActivityList({super.key, required this.activities, required this.filter});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +18,7 @@ class TripActivityList extends StatelessWidget {
         Activity activity = activities[i];
         return Container(
           margin: EdgeInsets.symmetric(horizontal: 10),
-          child: Dismissible(
+          child: filter == ActivityStatus.ongoing ? Dismissible(
             direction: DismissDirection.endToStart,
             background: Container(
               padding: EdgeInsets.symmetric(horizontal: 15),
@@ -31,7 +34,12 @@ class TripActivityList extends StatelessWidget {
             ),
             onDismissed: (_){
               print('dismiss');
+              Provider.of<TripProvider>(context, listen: false).setActivityToDone(activity);
             },
+          ) : Card(
+            child: ListTile(
+              title: Text(activity.name),
+            ),
           ),
         );
       }

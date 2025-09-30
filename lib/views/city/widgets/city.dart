@@ -1,6 +1,9 @@
 import 'package:first_project/models/city_model.dart';
+import 'package:first_project/providers/city_provider.dart';
+import 'package:first_project/providers/trip_provider.dart';
 import 'package:first_project/views/city/widgets/trip_activity_list.dart';
 import 'package:first_project/views/home/home.dart';
+import 'package:provider/provider.dart';
 import '../../../widgetts/dyma_drawer.dart';
 import 'package:flutter/material.dart';
 import '../widgets/activity_list.dart';
@@ -11,27 +14,7 @@ import '../widgets/trip_overview.dart';
 class CityView extends StatefulWidget {
   static const String routeName = '/city';
 
-  final City city;
-  final Function addTrip;
-
-  List<Activity> get activities {
-    return city.activities;
-  }
-
-  showContext({required BuildContext context, required List<Widget> children}) {
-    var orientation = MediaQuery.of(context).orientation;
-
-    if (orientation == Orientation.landscape) {
-      return Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: children,
-      );
-    } else {
-      return Column(children: children);
-    }
-  }
-
-  const CityView({super.key, required this.city, required this.addTrip});
+  const CityView({super.key});
 
   @override
   State<CityView> createState() => _CityState();
@@ -40,25 +23,15 @@ class CityView extends StatefulWidget {
 class _CityState extends State<CityView> with WidgetsBindingObserver {
   late Trip trip;
   late int index;
-  // late List<Activity> activities;
 
   @override // 1. Initialisation
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     index = 0;
-    trip = Trip(city: widget.city.name, activities: [], date: DateTime.now());
+    trip = Trip(city: null, activities: [], date: DateTime.now());
     // print('initState appelé');
   }
-
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   // on accède au context herité
-  //   activities = Data.of(context).activities;
-
-  // }
-
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -109,7 +82,7 @@ class _CityState extends State<CityView> with WidgetsBindingObserver {
     });
   }
 
-  void saveTrip() async {
+  void saveTrip(String cityName) async {
     final result = await showDialog(
       context: context,
       builder: (context) {
@@ -159,33 +132,14 @@ class _CityState extends State<CityView> with WidgetsBindingObserver {
         );
       });
     }else if(result == 'save'){
-      widget.addTrip(trip);
+      // widget.addTrip(trip);
+      trip.city = cityName;
+      Provider.of<TripProvider>(context).addTrip(trip);
        Navigator.pushNamed(context, Home.routeName);
     }
 
   }
-  // @override   // 3. Mise à jour des dépendances
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //    print('didChangeDependencies appelé');
-  //     // Appelé après initState et quand les dépendances changent
-  // }
-
-  // @override
-  // void didUpdateWidget(City oldWidget) {
-  //   super.didUpdateWidget(oldWidget);
-  //   print('didUpdateWidget appelé');
-  //    // Appelé quand le widget parent est reconstruit
-  // }
-
-  // 5. Nettoyage
-  // @override
-  // void dispose() {
-  //   print('dispose appelé');
-  //   // Nettoyage des ressources
-  //   super.dispose();
-  // }
-
+ 
   double get amount {
     return trip.activities.fold(0.0, (prev, element) {
       return prev + element.price;
@@ -195,6 +149,11 @@ class _CityState extends State<CityView> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     // final City city = ModalRoute.of(context)!.settings.arguments as City;
+    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
+    final String cityName = args['cityName'] as String;
+    
+    City city = Provider.of<CityProvider>(context).getCityByName(cityName);
     return Scaffold(
       appBar: AppBar(
         title: Text('Organisation du voyage'),
@@ -235,19 +194,18 @@ class _CityState extends State<CityView> with WidgetsBindingObserver {
         //   },
         //   itemCount: widget.activities.length,
         // ),
-        child: widget.showContext(
-          context: context,
+        child: Column(
           children: <Widget>[
             TripOverview(
               setDate: setDate,
               myTrip: trip,
-              cityName: widget.city.name,
+              cityName: city.name,
               amount: amount,
             ),
             Expanded(
               child: index == 0
                   ? ActivityList(
-                      activities: widget.activities,
+                      activities: city.activities,
                       selectedActivities: trip.activities,
                       toggleActivity: toggleActivity,
                     )
@@ -260,7 +218,9 @@ class _CityState extends State<CityView> with WidgetsBindingObserver {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: saveTrip,
+        onPressed: (){
+          saveTrip(city.name);
+        },
         child: Icon(Icons.forward),
       ),
       bottomNavigationBar: BottomNavigationBar(

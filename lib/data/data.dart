@@ -1,4 +1,5 @@
 import 'package:first_project/models/city_model.dart';
+import 'package:first_project/models/trip_model.dart';
 
 import '../models/activity_model.dart';
 
@@ -161,3 +162,32 @@ List<City> cities = [
 ]),
 ];
 
+
+ List<Trip> trips = [
+    Trip(city: 'Paris', activities: [
+      Activity(
+    image: 'assets/images/activities/act1.jpg',
+    name: 'Le Louvre',
+    id: 'a1',
+    city: 'Paris',
+    price: 12.00,
+  ),
+  Activity(
+    image: 'assets/images/activities/act2.jpg',
+    name: 'Les buttes Chaumont',
+    id: 'a2',
+    city: 'Paris',
+    price: 5.00,
+    status:ActivityStatus.done
+  ),
+  Activity(
+    image: 'assets/images/activities/act3.jpg',
+    name: 'Notre Dame',
+    id: 'a3',
+    city: 'Paris',
+    price: 15.00,
+  ),
+    ], date: DateTime.now().add(Duration(days: 1))),
+    Trip(city: 'Lyon', activities: [], date: DateTime.now().add(Duration(days: 2))),
+    Trip(city: 'Nice', activities: [], date: DateTime.now().subtract(Duration(days: 1)))
+  ];
