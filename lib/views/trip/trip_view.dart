@@ -1,12 +1,8 @@
-import 'package:first_project/models/trip_model.dart';
 import 'package:first_project/providers/city_provider.dart';
-import 'package:first_project/providers/trip_provider.dart';
 import 'package:first_project/views/trip/widgets/trip_activities.dart';
 import 'package:first_project/views/trip/widgets/trip_city_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-
 
 class TripView extends StatelessWidget {
   static const String routeName = '/trip';
@@ -20,15 +16,16 @@ class TripView extends StatelessWidget {
     final String cityName = args['cityName'] as String;
     final String tripId   = args['tripId'] as String;
 
-    final city = Provider.of<CityProvider>(context).getCityByName(cityName);
-    final Trip trip = Provider.of<TripProvider>(context).getById(tripId);
+    final city = Provider.of<CityProvider>(context, listen: false).getCityByName(cityName);  // false pour ne pas entrainer de
 
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
             TripCityBar(city: city),
-            TripActivities(activities:trip.activities),
+            TripActivities(
+              tripId:tripId
+            ),
           ],
         ),
       ),

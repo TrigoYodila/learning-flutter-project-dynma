@@ -3,9 +3,10 @@ import '../widgets/trip_activity_list.dart';
 import 'package:flutter/material.dart';
 
 class TripActivities extends StatelessWidget {
-  final List<Activity> activities;
+
+  final String tripId;
   
-  const TripActivities({super.key, required this.activities});
+  const TripActivities({super.key, required this.tripId});
 
   @override
   Widget build(BuildContext context) {
@@ -28,10 +29,14 @@ class TripActivities extends StatelessWidget {
                 child: TabBarView(
                   physics: NeverScrollableScrollPhysics(),
                   children: <Widget>[
-                    TripActivityList(activities: activities.where((activity) => activity.status == ActivityStatus.ongoing).toList(),
-                    filter: ActivityStatus.ongoing,),
-                    TripActivityList(activities: activities.where((activity) => activity.status == ActivityStatus.done).toList(),
-                    filter: ActivityStatus.ongoing,)
+                    TripActivityList(
+                    tripId:tripId,
+                    filter: ActivityStatus.ongoing
+                    ),
+                    TripActivityList(
+                     tripId:tripId,
+                     filter: ActivityStatus.ongoing
+                    )
                   ]
                 ),
               )
