@@ -10,16 +10,14 @@ import 'package:first_project/views/trips/trips_view.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'views/home/home.dart';
-import './data/data.dart' as data;
 
 void main() {
   runApp(DymaTrip());
 }
 
 class DymaTrip extends StatefulWidget {
-  final List<City> cities = data.cities;
 
-  DymaTrip({super.key});
+  const DymaTrip({super.key});
 
   @override
   State<DymaTrip> createState() => _DymaTripState();
@@ -27,12 +25,23 @@ class DymaTrip extends StatefulWidget {
 
 class _DymaTripState extends State<DymaTrip> {
 
+  // crée un objet de la classe CityProvider
+  final CityProvider cityProvider = CityProvider();
+
+  @override
+  // void initState() {
+  //   // appel de la methode fetchData pour recuperer les données
+  //   cityProvider.fetchData();
+  //   super.initState();
+  // }
+
   @override
   Widget build(BuildContext context) {
     return 
     MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(value: CityProvider()),
+        // ChangeNotifierProvider.value(value: cityProvider),
+        ChangeNotifierProvider(create: (context) => CityProvider()..fetchData()),
         ChangeNotifierProvider.value(value: TripProvider()),
       ],
       child: ChangeNotifierProvider(

@@ -2,12 +2,11 @@ import 'dart:collection';
 
 import 'package:first_project/models/activity_model.dart';
 import 'package:first_project/models/trip_model.dart';
-import '../data/data.dart' as data;
 import 'package:flutter/foundation.dart';
 
 class TripProvider with ChangeNotifier {
 
-  final List<Trip> _trips = data.trips;
+  final List<Trip> _trips = [];
 
   UnmodifiableListView<Trip> get trips => UnmodifiableListView(_trips);
 

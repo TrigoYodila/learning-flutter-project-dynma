@@ -1,16 +1,30 @@
 import 'dart:collection';
 import 'package:first_project/models/city_model.dart';
 import 'package:flutter/foundation.dart';
-import '../data/data.dart' as data;
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class CityProvider with ChangeNotifier {
 
-  final List<City> _cities = data.cities;
+  List<City> _cities = [];
 
   UnmodifiableListView<City> get cities => UnmodifiableListView(_cities);  // rend immutable la liste des éléments
   
   City getCityByName(String cityName) => cities.firstWhere((city) => city.name == cityName);
   
+  Future<void> fetchData() async {
+    try {
+      final url = Uri.parse('http://10.0.2.2:5000/api/cities');
+      http.Response response = await http.get(url);
+      // print(json.decode(response.body));
+      if (response.statusCode == 200){
+        _cities = (json.decode(response.body) as List).map((cityJson) => City.fromJson(cityJson)).toList();
+        notifyListeners();
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
   // @override
   // void notifyListeners() {
 
