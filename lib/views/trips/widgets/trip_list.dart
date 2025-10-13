@@ -10,6 +10,7 @@ class TripList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(trips);
     return ListView.builder(
       itemCount: trips.length,
       itemBuilder: (context, i){

@@ -15,7 +15,6 @@ class TripActivityList extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return  Consumer<TripProvider>(builder: (context, tripProvider, child){
-
       
     final Trip trip = Provider.of<TripProvider>(context).getById(tripId);
     final List<Activity> activities = trip.activities.where((activity)=> activity.status == filter).toList();
@@ -41,8 +40,8 @@ class TripActivityList extends StatelessWidget {
               ),
             ),
             onDismissed: (_){
-              print('dismiss');
-              Provider.of<TripProvider>(context, listen: false).setActivityToDone(activity);
+              // print('dismiss');
+              Provider.of<TripProvider>(context, listen: false).updateTrip(trip, activity.id);
             },
           ) : Card(
             child: ListTile(

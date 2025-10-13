@@ -134,7 +134,7 @@ class _CityState extends State<CityView> with WidgetsBindingObserver {
     }else if(result == 'save'){
       // widget.addTrip(trip);
       trip.city = cityName;
-      Provider.of<TripProvider>(context).addTrip(trip);
+      Provider.of<TripProvider>(context, listen: false).addTrip(trip);
        Navigator.pushNamed(context, Home.routeName);
     }
 

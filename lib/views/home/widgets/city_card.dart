@@ -21,11 +21,6 @@ class CityCard extends StatelessWidget {
                 fit: BoxFit.cover,
                 child: InkWell(
                   onTap:(){
-                    // Navigator.push(context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => CityView()
-                    //   )
-                    // );
                     Navigator.pushNamed(
                       context, 
                       '/city',

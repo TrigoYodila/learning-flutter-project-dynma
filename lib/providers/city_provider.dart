@@ -6,7 +6,9 @@ import 'dart:convert';
 
 class CityProvider with ChangeNotifier {
 
+  final String host = 'http://10.0.2.2:5000';
   List<City> _cities = [];
+  bool isLoading = false;
 
   UnmodifiableListView<City> get cities => UnmodifiableListView(_cities);  // rend immutable la liste des éléments
   
@@ -14,20 +16,18 @@ class CityProvider with ChangeNotifier {
   
   Future<void> fetchData() async {
     try {
-      final url = Uri.parse('http://10.0.2.2:5000/api/cities');
+      isLoading = true;
+      final url = Uri.parse('$host/api/cities');
       http.Response response = await http.get(url);
       // print(json.decode(response.body));
       if (response.statusCode == 200){
         _cities = (json.decode(response.body) as List).map((cityJson) => City.fromJson(cityJson)).toList();
+         isLoading = false;
         notifyListeners();
       }
     } catch (e) {
+      isLoading = false;
       rethrow;
     }
   }
-  // @override
-  // void notifyListeners() {
-
-  //   super.notifyListeners();
-  // }
 }

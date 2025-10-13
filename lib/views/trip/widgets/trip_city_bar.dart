@@ -14,7 +14,7 @@ class TripCityBar extends StatelessWidget {
         fit: StackFit.expand,
         alignment: Alignment.center,
         children: <Widget>[
-          Image.asset(city.image, fit: BoxFit.cover,),
+          Image.network(city.image, fit: BoxFit.cover,),
           Container(
             color: Colors.black38,
             padding: EdgeInsets.symmetric(vertical: 40, horizontal: 20),

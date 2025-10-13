@@ -42,7 +42,7 @@ class _DymaTripState extends State<DymaTrip> {
       providers: [
         // ChangeNotifierProvider.value(value: cityProvider),
         ChangeNotifierProvider(create: (context) => CityProvider()..fetchData()),
-        ChangeNotifierProvider.value(value: TripProvider()),
+        ChangeNotifierProvider(create: (context) => TripProvider()..fetchData()),
       ],
       child: ChangeNotifierProvider(
         create: (context){},
