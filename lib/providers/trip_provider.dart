@@ -7,9 +7,11 @@ import 'package:http/http.dart' as http;
 import 'dart:io';
 
 class TripProvider with ChangeNotifier {
+  
   final String host = 'http://10.0.2.2:5000';
   List<Trip> _trips = [];
   bool isLoading = false;
+
 
   UnmodifiableListView<Trip> get trips => UnmodifiableListView(_trips);
 

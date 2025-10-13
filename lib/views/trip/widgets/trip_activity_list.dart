@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class TripActivityList extends StatelessWidget {
-
   final String tripId;
   final ActivityStatus filter;
 
@@ -13,44 +12,55 @@ class TripActivityList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    return  Consumer<TripProvider>(builder: (context, tripProvider, child){
-      
     final Trip trip = Provider.of<TripProvider>(context).getById(tripId);
-    final List<Activity> activities = trip.activities.where((activity)=> activity.status == filter).toList();
-
-      return ListView.builder(
+    final List<Activity> activities =
+    trip.activities.where((activity) => activity.status == filter).toList();
+    return ListView.builder(
       itemCount: activities.length,
-      itemBuilder: (context, i){
-        Activity activity = activities[i];
+      itemBuilder: (context, i) {
+        final Activity activity = activities[i];
         return Container(
-          margin: EdgeInsets.symmetric(horizontal: 10),
-          child: filter == ActivityStatus.ongoing ? Dismissible(
+          margin: const EdgeInsets.symmetric(horizontal: 10),
+          child: filter == ActivityStatus.ongoing
+              ? Dismissible(
             direction: DismissDirection.endToStart,
             background: Container(
-              padding: EdgeInsets.symmetric(horizontal: 15),
+              padding: const EdgeInsets.symmetric(horizontal: 15),
               alignment: Alignment.centerRight,
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),color: Colors.greenAccent,),
-              child: Icon(Icons.check,size: 30,color: Colors.white,),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.greenAccent[700],
+              ),
+              child: const Icon(
+                Icons.check,
+                color: Colors.white,
+                size: 30,
+              ),
             ),
-            key: ValueKey(activity.id), 
+            key: ValueKey(activity.id),
             child: Card(
               child: ListTile(
                 title: Text(activity.name),
               ),
             ),
-            onDismissed: (_){
-              // print('dismiss');
-              Provider.of<TripProvider>(context, listen: false).updateTrip(trip, activity.id);
-            },
-          ) : Card(
+            confirmDismiss: (_) =>
+                Provider.of<TripProvider>(context, listen: false)
+                    .updateTrip(trip, activity.id!)
+                    .then((_) => true)
+                    .catchError((_) => false),
+          )
+              : Card(
             child: ListTile(
-              title: Text(activity.name),
+              title: Text(
+                activity.name,
+                style: const TextStyle(
+                  color: Colors.grey,
+                ),
+              ),
             ),
           ),
         );
-    });
-      }
+      },
     );
   }
 }

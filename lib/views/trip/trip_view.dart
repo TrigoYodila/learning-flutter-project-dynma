@@ -1,6 +1,7 @@
 import 'package:first_project/providers/city_provider.dart';
 import 'package:first_project/views/trip/widgets/trip_activities.dart';
 import 'package:first_project/views/trip/widgets/trip_city_bar.dart';
+import 'package:first_project/views/trip/widgets/trip_weather.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -23,6 +24,7 @@ class TripView extends StatelessWidget {
         child: Column(
           children: <Widget>[
             TripCityBar(city: city),
+            TripWeather(cityName:cityName,),
             TripActivities(
               tripId:tripId
             ),

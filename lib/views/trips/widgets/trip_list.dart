@@ -10,21 +10,21 @@ class TripList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(trips);
-    return ListView.builder(
+     return ListView.builder(
       itemCount: trips.length,
-      itemBuilder: (context, i){
+      itemBuilder: (context, i) {
         var trip = trips[i];
         return ListTile(
-          title: Text(trip.city as String),
-          subtitle: trip.date != null ? Text(DateFormat("d/M/y").format(trip.date)) : null,
-          trailing: Icon(Icons.info),
-          onTap: (){
-            Navigator.pushNamed(context, TripView.routeName, arguments: {
-              'tripId':trip.id,
-              'cityName':trip.city
-            });
-          },
+          title: Text(trip.city),
+          subtitle: trip.date != null
+              ? Text(DateFormat("d/M/y").format(trip.date!))
+              : null,
+          trailing: const Icon(Icons.info),
+          onTap: () =>
+              Navigator.pushNamed(context, TripView.routeName, arguments: {
+                'tripId': trip.id as String,
+                'cityName': trip.city,
+              }),
         );
       },
     );
