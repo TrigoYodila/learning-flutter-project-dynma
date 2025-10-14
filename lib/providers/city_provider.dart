@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'package:first_project/models/activity_model.dart';
 import 'package:first_project/models/city_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -29,6 +30,24 @@ class CityProvider with ChangeNotifier {
       }
     } catch (e) {
       isLoading = false;
+      rethrow;
+    }
+  }
+
+  Future<void> addActivityToCity(Activity newActivity) async {
+  
+    try {
+      String cityId = getCityByName(newActivity.city).id;
+      final url = Uri.parse('$host/api/city/$cityId/activity');
+      http.Response response = await http.post(url, headers: {
+        'Content-type':'application/json'
+      },body: json.encode(newActivity.toJson()));
+      if(response.statusCode == 200){
+        int index = _cities.indexWhere((city) => city.id == cityId);
+        _cities[index] = City.fromJson(json.decode(response.body));
+      }
+      notifyListeners();
+    } catch (e) {
       rethrow;
     }
   }

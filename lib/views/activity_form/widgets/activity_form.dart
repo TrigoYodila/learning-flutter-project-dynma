@@ -1,5 +1,7 @@
 import 'package:first_project/models/activity_model.dart';
+import 'package:first_project/providers/city_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ActivityForm extends StatefulWidget {
   final String cityName;
@@ -11,40 +13,52 @@ class ActivityForm extends StatefulWidget {
 
 class _ActivityFormState extends State<ActivityForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  late FocusNode _priceFocusNode;  // attribut privé
+  late FocusNode _priceFocusNode;
   late FocusNode _urlFocusNode;
-  late Activity newActivity;
-  FormState? get form {
-    return _formKey.currentState;
+  late Activity _newActivity;
+  bool _isLoading = false;
+
+  FormState get form {
+    return _formKey.currentState!;
   }
 
   @override
   void initState() {
-    newActivity = Activity(
-      name: widget.cityName, 
-      city: '', 
-      image: '', 
+    _newActivity = Activity(
+      city: widget.cityName,
+      name: '',
       price: 0,
-      status: ActivityStatus.ongoing
+      image: '',
+      status: ActivityStatus.ongoing,
     );
     _priceFocusNode = FocusNode();
     _urlFocusNode = FocusNode();
     super.initState();
   }
 
-  @override
-  void dispose() {
-    _urlFocusNode.dispose();
-    _priceFocusNode.dispose();
-    super.dispose();
-  }
-
-  void submitForm(){
-    if(form?.validate() ?? false){
-      form?.save();
-    } else {
+  Future<void> submitForm() async {
+    try {
+      if (form.validate()) {
+        _formKey.currentState!.save();
+        setState(() => _isLoading = true);
+        await Provider.of<CityProvider>(
+          context,
+          listen: false,
+        ).addActivityToCity(_newActivity);
+        setState(() => _isLoading = false);
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      setState(() => _isLoading = false);
       print('error');
     }
+  }
+
+  @override
+  void dispose() {
+    _priceFocusNode.dispose();
+    _urlFocusNode.dispose();
+    super.dispose();
   }
 
   @override
@@ -53,65 +67,80 @@ class _ActivityFormState extends State<ActivityForm> {
       padding: EdgeInsets.all(15),
       child: Form(
         key: _formKey,
-      child: Column(
-        children: <Widget>[
-          TextFormField(
-            autofocus: true,
-            validator: (value){
-              if(value!.isEmpty) return 'Remplissez le Nom';
-              return null;
-            }, 
-            textInputAction: TextInputAction.next,
-            decoration: InputDecoration(
-              // hintText: 'Nom'
-              labelText: 'Nom'
+        child: Column(
+          children: <Widget>[
+            TextFormField(
+              autofocus: true,
+              decoration: InputDecoration(
+                labelText: 'Nom',
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Remplissez le nom';
+                }
+                return null;
+              },
+              onSaved: (value) => _newActivity.name = value!,
+              onFieldSubmitted: (_) =>
+                  FocusScope.of(context).requestFocus(_priceFocusNode),
+              textInputAction: TextInputAction.next,
             ),
-            onSaved: (value) => newActivity.name = value.toString(),
-             onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_priceFocusNode),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          TextFormField(
-            keyboardType: TextInputType.number,
-            validator: (value){
-              if(value!.isEmpty) return 'Remplissez le Prix';
-              return null;
-            },
-            focusNode: _priceFocusNode, 
-            textInputAction: TextInputAction.next,
-            decoration: InputDecoration(
-              hintText: 'Prix'
+            SizedBox(
+              height: 10,
             ),
-            onSaved: (value) => newActivity.price = double.parse(value.toString()),
-            onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_urlFocusNode),
-          ),
-          TextFormField(
-             keyboardType: TextInputType.url,
-            validator: (value){
-              if(value!.isEmpty) return 'Remplissez l\'Url';
-              return null;
-            }, 
-            onFieldSubmitted: (_) => submitForm,
-            focusNode:_urlFocusNode,
-            decoration: InputDecoration(
-              hintText: 'Url Image'
+            TextFormField(
+              keyboardType: TextInputType.number,
+              focusNode: _priceFocusNode,
+              decoration: InputDecoration(
+                hintText: 'Prix',
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Remplissez le prix';
+                }
+                return null;
+              },
+              onSaved: (value) => _newActivity.price = double.parse(value.toString()),
+              onFieldSubmitted: (_) =>
+                  FocusScope.of(context).requestFocus(_urlFocusNode),
+              textInputAction: TextInputAction.next,
             ),
-            onSaved: (value) => newActivity.image = value.toString(),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              ElevatedButton(onPressed: () => Navigator.pop(context), child: Text('Annuler')),
-              ElevatedButton(onPressed: submitForm , child: Text('Sauvegarder'))
-            ],
-          )
-        ],
-      )
-    ),
+            SizedBox(
+              height: 10,
+            ),
+            TextFormField(
+              keyboardType: TextInputType.url,
+              focusNode: _urlFocusNode,
+              decoration: InputDecoration(
+                hintText: 'Url image',
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Remplissez l\'Url';
+                }
+                return null;
+              },
+              onSaved: (value) => _newActivity.image = value!,
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                TextButton(
+                  child: Text('annuler'),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                ElevatedButton(
+                  child: Text('sauvegarder'),
+                  onPressed: _isLoading ? null : submitForm,
+                )
+              ],
+            )
+          ],
+        ),
+      ),
     );
   }
 }
