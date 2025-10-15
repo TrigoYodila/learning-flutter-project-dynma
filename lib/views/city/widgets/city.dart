@@ -144,8 +144,8 @@ class _CityState extends State<CityView> {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    final String cityName = args['cityName'] as String;
+    // CORRECTION : Récupérer directement le String au lieu d'un Map
+    final String cityName = ModalRoute.of(context)!.settings.arguments as String;
     
     City city = Provider.of<CityProvider>(context).getCityByName(cityName);
     
@@ -154,8 +154,12 @@ class _CityState extends State<CityView> {
         title: const Text('Organisation voyage'),
         actions: <Widget>[
           IconButton(
-            onPressed: () => Navigator.pushNamed(context, ActivityFormView.routeName, arguments: cityName), 
-            icon: Icon(Icons.add)
+            onPressed: () => Navigator.pushNamed(
+              context, 
+              ActivityFormView.routeName, 
+              arguments: cityName
+            ), 
+            icon: const Icon(Icons.add)
           )
         ],
       ),
@@ -163,21 +167,23 @@ class _CityState extends State<CityView> {
       body: Column(
         children: <Widget>[
           TripOverview(
-              cityName: city.name,
-              mytrip: mytrip,
-              setDate: setDate,
-              amount: amount),
+            cityName: city.name,
+            trip: mytrip,
+            setDate: setDate,
+            amount: amount,
+            cityImage: city.image,
+          ),
           Expanded(
             child: index == 0
                 ? ActivityList(
-              activities: city.activities,
-              selectedActivities: mytrip.activities,
-              toggleActivity: toggleActivity,
-            )
+                    activities: city.activities,
+                    selectedActivities: mytrip.activities,
+                    toggleActivity: toggleActivity,
+                  )
                 : TripActivityList(
-              activities: mytrip.activities,
-              deleteTripActivity: deleteTripActivity,
-            ),
+                    activities: mytrip.activities,
+                    deleteTripActivity: deleteTripActivity,
+                  ),
           ),
         ],
       ),
