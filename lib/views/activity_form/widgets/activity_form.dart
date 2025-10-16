@@ -1,5 +1,6 @@
 import 'package:first_project/models/activity_model.dart';
 import 'package:first_project/providers/city_provider.dart';
+import 'package:first_project/views/activity_form/widgets/activity_form_image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,8 +16,10 @@ class _ActivityFormState extends State<ActivityForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late FocusNode _priceFocusNode;
   late FocusNode _urlFocusNode;
+  late FocusNode _addressFocusNode;
   late Activity _newActivity;
   late String _nameInputAsync;
+    final TextEditingController _urlController = TextEditingController();
   bool _isLoading = false;
 
   FormState get form {
@@ -30,11 +33,26 @@ class _ActivityFormState extends State<ActivityForm> {
       name: '',
       price: 0,
       image: '',
+      location: LocationActivity(
+        address: null,
+        longitude: null,
+        latitude: null
+      ),
       status: ActivityStatus.ongoing,
     );
     _priceFocusNode = FocusNode();
     _urlFocusNode = FocusNode();
+    _addressFocusNode = FocusNode();
+    _addressFocusNode.addListener((){
+
+    });
     super.initState();
+  }
+
+  void updateUrlField(String url) {
+    setState(() {
+      _urlController.text = url;
+    });
   }
 
   Future<void> submitForm() async {
@@ -63,6 +81,8 @@ class _ActivityFormState extends State<ActivityForm> {
   void dispose() {
     _priceFocusNode.dispose();
     _urlFocusNode.dispose();
+    _addressFocusNode.dispose();
+    _urlController.dispose();
     super.dispose();
   }
 
@@ -94,7 +114,7 @@ class _ActivityFormState extends State<ActivityForm> {
               textInputAction: TextInputAction.next,
             ),
             SizedBox(
-              height: 10,
+              height: 30,
             ),
             TextFormField(
               keyboardType: TextInputType.number,
@@ -114,11 +134,21 @@ class _ActivityFormState extends State<ActivityForm> {
               textInputAction: TextInputAction.next,
             ),
             SizedBox(
-              height: 10,
+              height: 30,
+            ),
+            TextFormField(
+              decoration: InputDecoration(
+                hintText: 'Adresse'
+              ),
+              onSaved: (value) => _newActivity.location!.address,
+            ),
+            SizedBox(
+              height: 30,
             ),
             TextFormField(
               keyboardType: TextInputType.url,
               focusNode: _urlFocusNode,
+              controller: _urlController,
               decoration: InputDecoration(
                 hintText: 'Url image',
               ),
@@ -131,7 +161,11 @@ class _ActivityFormState extends State<ActivityForm> {
               onSaved: (value) => _newActivity.image = value!,
             ),
             SizedBox(
-              height: 10,
+              height: 30,
+            ),
+            ActivityFormImagePicker(updateUrl: updateUrlField),
+            SizedBox(
+              height: 30,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
